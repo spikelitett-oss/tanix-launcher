@@ -11,22 +11,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 8
+      - name: Set up Java Environments
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '8'
+          java-version: |
+            17
+            8
 
-      - name: Install Gradle (if gradlew missing)
+      - name: Create Gradle Wrapper with Java 17
         run: |
           if [ ! -f gradlew ]; then
             sudo apt-get update && sudo apt-get install -y gradle
             gradle wrapper --gradle-version 4.4.1
           fi
           chmod +x gradlew
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
 
-      - name: Build APK with Gradle
+      - name: Build APK with Java 8
         run: ./gradlew assembleDebug
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_8_X64 }}
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
