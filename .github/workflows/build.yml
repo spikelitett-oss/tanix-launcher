@@ -17,11 +17,13 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Grant execute permission for gradlew
+      - name: Install Gradle (if gradlew missing)
         run: |
-          if [ -f gradlew ]; then
-            chmod +x gradlew
+          if [ ! -f gradlew ]; then
+            sudo apt-get update && sudo apt-get install -y gradle
+            gradle wrapper
           fi
+          chmod +x gradlew
 
       - name: Build APK with Gradle
         run: ./gradlew assembleDebug
